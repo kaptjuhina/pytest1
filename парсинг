@@ -1,0 +1,40 @@
+import requests
+from bs4 import BeautifulSoup
+
+def get_data():
+    headers = {
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                  "user-agent": "Mozilla/5.0 (X11; Linuxx86_64) AppleWebKit/537.36(KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+
+    }
+    url = "https://www.labirint.ru/genres/2308/"
+
+    response = requests.get(url = url, headers = headers)
+    soup = BeautifulSoup(response.text, "lxml")
+
+    pages_count = int(soup.find("div", class_="pagination.numbers").find_all("a")[-1].text)
+    for page in range (1, pages_count + 1):
+        url = f"https://www.labirint.ru/genres/2308/&page={page}"
+
+
+        response = requests.get( url = url, headers = headers)
+        soup = BeautifulSoup(response.text, "lxml")
+
+        books_items =soup.find("tbody", class_= "products-table__body").find_all("tr")
+
+    for bi in books_items:
+        book_data =bi.find_all("td")
+
+        try:
+            book_data[0].find("a").text.strip()
+
+        except:
+            book_title = "Нет названия книги"
+            print(book_title)
+
+def main():
+     get_data()
+
+if name == "__main__" :
+    main()
+
